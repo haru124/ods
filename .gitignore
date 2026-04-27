@@ -216,3 +216,47 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+
+# ML / CV specific ignores
+
+# Datasets
+data/
+datasets/
+*.zip
+*.tar
+*.tar.gz
+*.7z
+
+# Model weights / checkpoints
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.engine
+checkpoints/
+weights/
+models/
+
+# Training outputs
+runs/
+logs/
+outputs/
+results/
+events.out.tfevents.*
+
+# Experiment tracking
+mlruns/
+wandb/
+
+# Cache
+.cache/
+*.cache
+
+# Annotation / intermediate
+*.pkl
+annotations_converted/
+
+# Custom venv
+odslib/
