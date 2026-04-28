@@ -1,0 +1,27 @@
+1. Create git repo with readme, license and gitignore
+2. edit readme to include description
+3. add ml specific section to gitignore
+4. clone repo to local machine
+5. create and switch to new branch dev
+6. create venv
+python -m venv odslib
+
+7.activate it — do this EVERY time you open a new terminal
+odslib\Scripts\activate
+
+8. install packages one group at a time
+
+pip install torch torchvision torchaudio
+pip install numpy pandas matplotlib seaborn opencv-python Pillow scikit-learn
+pip install jupyter  			#separate from ipykernel and widgets , long path error ow
+pip install ipykernel ipywidgets
+pip install mlflow tensorboard
+pip install onnx onnxruntime
+pip install pyyaml tqdm python-dotenv
+pip install torchmetrics
+pip install pycocotools-windows      #error -- happens because pycocotools-windows is no longer available/compatible 					with new python, fix - pip install pycocotools 
+
+pip install pycocotools 
+
+9. freeze exact versions
+pip freeze > requirements.txt
