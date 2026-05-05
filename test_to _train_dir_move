@@ -1,0 +1,49 @@
+from pathlib import Path
+import shutil
+
+train_img_dir = Path('./data/cityscapes/images/train')
+train_lbl_dir = Path('./data/cityscapes/gtFine/train')
+
+test_img_dir  = Path('./data/cityscapes/images/test')
+test_lbl_dir  = Path('./data/cityscapes/gtFine/test')
+
+SUFFIXES = [
+    '_gtFine_color.png',
+    '_gtFine_instanceIds.png',
+    '_gtFine_labelIds.png',
+    '_gtFine_labelTrainIds.png',
+    '_gtFine_polygons.json',
+]
+
+moved_back = 0
+
+for img_path in test_img_dir.rglob('*_leftImg8bit.png'):
+    city = img_path.parent.name
+    base = img_path.name.replace('_leftImg8bit.png', '')
+
+    # move image back
+    dest_img = train_img_dir / city / img_path.name
+    dest_img.parent.mkdir(parents=True, exist_ok=True)
+
+    shutil.move(img_path, dest_img)
+    moved_back += 1
+
+    # move annotations back
+    for suffix in SUFFIXES:
+        src = test_lbl_dir / city / f"{base}{suffix}"
+        dest = train_lbl_dir / city / f"{base}{suffix}"
+
+        if src.exists():
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(src, dest)
+
+print(f"Moved back {moved_back} images")
+
+# OPTIONAL: clean empty test folders
+for p in test_img_dir.rglob('*'):
+    if p.is_dir() and not any(p.iterdir()):
+        p.rmdir()
+
+for p in test_lbl_dir.rglob('*'):
+    if p.is_dir() and not any(p.iterdir()):
+        p.rmdir()

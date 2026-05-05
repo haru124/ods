@@ -1,0 +1,97 @@
+# ─────────────────────────────────────────────
+#  ODS  —  Object Detection & Segmentation
+#  Central configuration file
+# ─────────────────────────────────────────────
+
+project:
+  name: ods
+  task: both          # Options: detection | segmentation | both
+
+# ── Paths ────────────────────────────────────
+paths:
+  data_root: data/cityscapes
+  artifacts_root: artifacts
+  checkpoints_dir: artifacts/checkpoints
+  logs_dir: artifacts/logs
+  mlflow_tracking_uri: artifacts/mlruns
+  onnx_dir: artifacts/onnx
+
+# ── Dataset ──────────────────────────────────
+dataset:
+  name: cityscapes
+  # Cityscapes folder layout:
+  #   data/cityscapes/Images/{train,val,test}/<city>/<img>.png
+  #   data/cityscapes/gtFine/{train,val,test}/<city>/<ann>
+  images_subdir: Images
+  annotations_subdir: gtFine
+  # Label map: only the 19 standard training IDs (0-18)
+  num_classes_seg: 19          # segmentation
+  num_classes_det: 8           # vehicles, pedestrian, rider, bicycle, motorcycle, bus, truck, train
+  ignore_index: 255
+  image_size: [512, 1024]      # [H, W]
+
+# ── DataLoader ───────────────────────────────
+dataloader:
+  train_batch_size: 4
+  val_batch_size: 2
+  num_workers: 4
+  pin_memory: true
+
+# ── Model ────────────────────────────────────
+model:
+  # backbone: resnet18 | resnet34 | resnet50
+  backbone: resnet50
+  pretrained_backbone: true
+  fpn_out_channels: 256
+  # detection
+  detection:
+    anchor_sizes: [[32], [64], [128], [256], [512]]
+    anchor_ratios: [0.5, 1.0, 2.0]
+    rpn_fg_iou_thresh: 0.7
+    rpn_bg_iou_thresh: 0.3
+    box_score_thresh: 0.05
+    box_nms_thresh: 0.5
+    box_detections_per_img: 100
+  # segmentation
+  segmentation:
+    decoder: fcn               # fcn | deeplab
+    decoder_channels: 512
+    dropout: 0.1
+
+# ── Training ─────────────────────────────────
+training:
+  epochs: 50
+  # optimizer: sgd | adam | adamw
+  optimizer: sgd
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 1e-4
+  # scheduler: step | cosine | onecycle | plateau
+  scheduler: cosine
+  warmup_epochs: 5
+  # loss config — values switched per experiment
+  detection_loss: focal        # focal | smoothl1+ce | giou
+  segmentation_loss: cross_entropy  # cross_entropy | dice | focal | combo
+  # gradient clipping
+  clip_grad_norm: 10.0
+  # mixed precision
+  use_amp: true
+  # resume from checkpoint (set path or leave empty)
+  resume_checkpoint: ""
+
+# ── Evaluation ───────────────────────────────
+evaluation:
+  # detection: mAP@0.5, mAP@0.5:0.95
+  det_iou_thresholds: [0.5, 0.75]
+  # segmentation: mIoU per class
+  seg_metrics: [miou, per_class_iou, pixel_accuracy]
+  eval_every_n_epochs: 5
+
+# ── Inference ────────────────────────────────
+inference:
+  device: auto                 # auto | cpu | cuda
+  conf_threshold: 0.3
+  nms_threshold: 0.5
+  # profiling
+  profile_runs: 100
+  warmup_runs: 10

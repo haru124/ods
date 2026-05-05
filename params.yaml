@@ -1,0 +1,107 @@
+# ─────────────────────────────────────────────
+#  params.yaml  —  Experiment Matrix
+#  Each block is a named experiment.
+#  Run:  python main.py --experiment exp_det_001
+# ─────────────────────────────────────────────
+
+# ── Detection Experiments ─────────────────────
+experiments:
+
+  # ── Baseline ───────────────────────────────
+  exp_det_001:
+    task: detection
+    backbone: resnet50
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    detection_loss: focal
+    epochs: 50
+    description: "Baseline ResNet50 + Focal Loss"
+
+  exp_det_002:
+    task: detection
+    backbone: resnet34
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    detection_loss: smoothl1
+    epochs: 50
+    description: "ResNet34 + SmoothL1 (lighter backbone)"
+
+  exp_det_003:
+    task: detection
+    backbone: resnet50
+    optimizer: adamw
+    lr: 0.0001
+    scheduler: onecycle
+    detection_loss: giou
+    epochs: 50
+    description: "ResNet50 + GIoU + AdamW"
+
+  exp_det_004:
+    task: detection
+    backbone: resnet18
+    optimizer: sgd
+    lr: 0.02
+    scheduler: step
+    detection_loss: focal
+    epochs: 50
+    description: "Lightweight ResNet18 — fast training"
+
+  # ── Segmentation Experiments ────────────────
+  exp_seg_001:
+    task: segmentation
+    backbone: resnet50
+    decoder: fcn
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    segmentation_loss: cross_entropy
+    epochs: 50
+    description: "FCN-ResNet50 + CrossEntropy baseline"
+
+  exp_seg_002:
+    task: segmentation
+    backbone: resnet50
+    decoder: deeplab
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    segmentation_loss: dice
+    epochs: 50
+    description: "DeepLab-ResNet50 + Dice Loss"
+
+  exp_seg_003:
+    task: segmentation
+    backbone: resnet34
+    decoder: fcn
+    optimizer: adamw
+    lr: 0.0005
+    scheduler: cosine
+    segmentation_loss: focal
+    epochs: 50
+    description: "FCN-ResNet34 + Focal Loss"
+
+  exp_seg_004:
+    task: segmentation
+    backbone: resnet50
+    decoder: fcn
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    segmentation_loss: combo        # 0.5*CE + 0.5*Dice
+    epochs: 50
+    description: "FCN-ResNet50 + Combo Loss (CE+Dice)"
+
+  # ── Joint (Both heads) ─────────────────────
+  exp_both_001:
+    task: both
+    backbone: resnet50
+    decoder: fcn
+    optimizer: sgd
+    lr: 0.01
+    scheduler: cosine
+    detection_loss: focal
+    segmentation_loss: cross_entropy
+    epochs: 50
+    description: "Joint model — both heads simultaneously"
