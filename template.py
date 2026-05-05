@@ -98,6 +98,7 @@ list_of_files = [
     "setup.py",
     "requirements.txt",
     "Dockerfile",
+    "test_dir_creation.py"
 ]
 
 for filepath in list_of_files:
